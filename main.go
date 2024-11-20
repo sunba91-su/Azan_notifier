@@ -9,17 +9,6 @@ import (
 	"time"
 )
 
-type SunriseSunsetResponse struct {
-	Results struct {
-		City     string `json:"CityName"`
-		TimeZone string `json:"TimeZone"`
-		Noon     string `json:"Noon"`
-		Sunrise  string `json:"Sunrise"`
-		Sunset   string `json:"Sunset"`
-		Maghreb  string `json:"Maghreb"`
-	} `json:"results"`
-}
-
 func getSunriseSunset(CityCode string) (string, string, error) {
 	resp, err := http.Get(fmt.Sprintf("%s?lat=%s&lng=%s&formatted=0", PrayerAPI, cityLat(city), cityLng(city)))
 	if err != nil {
