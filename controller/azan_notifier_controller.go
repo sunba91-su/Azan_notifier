@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 func StartProgram() {
@@ -14,7 +16,8 @@ func StartProgram() {
 	if err != nil {
 		fmt.Println("An error accoure", err)
 	}
-	fmt.Println(ReligiousTimes)
+	DailyReportResponse := handlers.GenDailyReport(ReligiousTimes)
+	DailyReport(DailyReportResponse)
 
 }
 
@@ -36,4 +39,16 @@ func GetReligiousTimes(CityCode string) (models.GetSunsetInfo, error) {
 		return response, err
 	}
 	return response, err
+}
+
+func DailyReport(Message string) {
+	SenderNumber, _ := strconv.Atoi(handlers.GetEnv("Sender"))
+	Resivers := handlers.GetEnv("Resivers")
+	Resiver := strings.Split(Resivers, ",")
+	DailyReportBody := models.SendSMS{
+		Sender:   SenderNumber,
+		Recivers: Resiver,
+		Message:  Message,
+	}
+	handlers.SendSMS(DailyReportBody)
 }

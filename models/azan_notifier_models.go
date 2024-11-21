@@ -9,9 +9,18 @@ type GetSunsetInfo struct {
 	Sunrise  string `json:"Sunrise"`
 	Sunset   string `json:"Sunset"`
 	Maghreb  string `json:"Maghreb"`
+	Imsaak   string `json:"Imsaak"`
+	Date     string `json:"Today"`
+	Midnight string `json:"Midnight"`
 }
 
 type SendSMS struct {
+	Sender   int      `json:"lineNumber"`
+	Message  string   `json:"MessageText"`
+	Recivers []string `json:"Mobiles"`
+}
+
+type SendScaduleSMS struct {
 	Sender   int       `json:"lineNumber"`
 	Message  string    `json:"MessageText"`
 	Recivers []string  `json:"Mobiles"`
