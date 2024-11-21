@@ -1,10 +1,39 @@
 package controller
 
+import (
+	"azan_notifier/handlers"
+	"azan_notifier/models"
+	"encoding/json"
+	"fmt"
+	"net/http"
+)
+
 func StartProgram() {
+	CityCode := handlers.GetEnv("CityCode")
+	ReligiousTimes, err := GetReligiousTimes(CityCode)
+	if err != nil {
+		fmt.Println("An error accoure", err)
+	}
+	fmt.Println(ReligiousTimes)
 
 }
 
-func GetReligiousTimes(CityCode string) (*GetSunsetInfo, error) {
-	var GetSunsetInfo GetSunsetInfo
-	return &GetSunsetInfo
+func GetReligiousTimes(CityCode string) (models.GetSunsetInfo, error) {
+	var response models.GetSunsetInfo
+	PrayerAPI := handlers.GetEnv("PrayerAPI")
+	CallUrl := fmt.Sprintf("%s/%s", PrayerAPI, CityCode)
+	RTimes, err := http.Get(CallUrl)
+	if err != nil {
+		return response, err
+	}
+	defer RTimes.Body.Close()
+
+	if RTimes.StatusCode != http.StatusOK {
+		return response, fmt.Errorf("failed to get data: %s", RTimes.Status)
+	}
+	err = json.NewDecoder(RTimes.Body).Decode(&response)
+	if err != nil {
+		return response, err
+	}
+	return response, err
 }

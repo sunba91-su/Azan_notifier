@@ -8,3 +8,4 @@
 *.out
 go.work.sum
 .env
+azan_notifier

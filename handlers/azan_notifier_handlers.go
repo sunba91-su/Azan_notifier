@@ -16,5 +16,3 @@ func LoadEnvs() {
 func GetEnv(env string) string {
 	return os.Getenv(env)
 }
-
-func GetCityInfo()

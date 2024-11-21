@@ -67,7 +67,7 @@ import (
 // 	time.AfterFunc(sunriseTime.Sub(time.Now()), func() {
 // 		sendSMS(phoneNumber, "Sunrise is at: "+sunrise)
 // 	})
-// }
+// }f
 
 func main() {
 	handlers.LoadEnvs()
