@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -64,6 +65,29 @@ func SendSMS(MessageBody models.SendSMS) {
 	}
 	fmt.Println(string(body))
 }
-func GenEventsTimes(data models.GetSunsetInfo) {
-	fmt.Println(data)
+func ParsTime(timeString string) int64 {
+	layout := "15:04:05"
+	parsedTime, err := time.Parse(layout, timeString)
+	fmt.Println("the time string: ", timeString)
+	fmt.Println("the parset time : ", parsedTime)
+	if err != nil {
+		return 0
+	}
+	location, err := time.LoadLocation("Asia/Tehran")
+	if err != nil {
+		return 0
+	}
+	timeInLocation := parsedTime.In(location)
+	return timeInLocation.Unix()
+}
+
+func GenEventsTimes(data models.GetSunsetInfo) models.EventUnixTime {
+	var ReligiousUnixTimes models.EventUnixTime
+	ReligiousUnixTimes.Imsaak = ParsTime(data.Imsaak)
+	ReligiousUnixTimes.Sunrise = ParsTime(data.Sunrise)
+	ReligiousUnixTimes.Noon = ParsTime(data.Noon)
+	ReligiousUnixTimes.Sunset = ParsTime(data.Sunset)
+	ReligiousUnixTimes.Maghreb = ParsTime(data.Maghreb)
+	ReligiousUnixTimes.Midnight = ParsTime(data.Midnight)
+	return ReligiousUnixTimes
 }

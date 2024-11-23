@@ -23,3 +23,12 @@ type SMSResponse struct {
 	Status   int    `json:"status"`
 	Response string `json:"message"`
 }
+
+type EventUnixTime struct {
+	Imsaak   int64
+	Sunrise  int64
+	Noon     int64
+	Sunset   int64
+	Maghreb  int64
+	Midnight int64
+}
