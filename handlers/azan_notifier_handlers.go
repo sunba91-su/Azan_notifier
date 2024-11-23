@@ -24,7 +24,8 @@ func GetEnv(env string) string {
 }
 func GenDailyReport(data models.GetSunsetInfo) string {
 	DailyReportMessage := fmt.Sprintf(
-		"سلام عزیزم \n روز به خیر \n اطلاعات روز : \n تاریخ : %s \n اذان صبح : %s \n طلوع خورشید : %s \n اذان ظهر : %s \n غروب خورشید : %s \n اذان مغرب و عشا : %s \n نیمه شب شرعی : %s",
+		"سلام عزیزم \n روز به خیر \n اطلاعات روز شهر %s : \n تاریخ : %s \n اذان صبح : %s \n طلوع خورشید : %s \n اذان ظهر : %s \n غروب خورشید : %s \n اذان مغرب و عشا : %s \n نیمه شب شرعی : %s",
+		data.City,
 		data.Date,
 		data.Imsaak,
 		data.Sunrise,
@@ -62,4 +63,7 @@ func SendSMS(MessageBody models.SendSMS) {
 		return
 	}
 	fmt.Println(string(body))
+}
+func GenEventsTimes(data models.GetSunsetInfo) {
+	fmt.Println(data)
 }

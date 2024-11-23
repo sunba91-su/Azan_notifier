@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type GetSunsetInfo struct {
 	City     string `json:"CityName"`
 	TimeZone string `json:"TimeZone"`
@@ -18,13 +16,7 @@ type SendSMS struct {
 	Sender   int      `json:"lineNumber"`
 	Message  string   `json:"MessageText"`
 	Recivers []string `json:"Mobiles"`
-}
-
-type SendScaduleSMS struct {
-	Sender   int       `json:"lineNumber"`
-	Message  string    `json:"MessageText"`
-	Recivers []string  `json:"Mobiles"`
-	SendTime time.Time `json:"SendDateTime"`
+	SendTime *int64   `json:"SendDateTime,omitempty"`
 }
 
 type SMSResponse struct {
