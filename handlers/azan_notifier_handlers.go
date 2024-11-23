@@ -40,12 +40,9 @@ func SendSMS(MessageBody models.SendSMS) {
 	APIKeyHeader := GetEnv("APIKeyHeader")
 	APIKey := GetEnv("APIKey")
 	SMSProviderAPIMethod := GetEnv("SMSProviderAPIMethod")
-	fmt.Println(MessageBody)
 	MessageByte, _ := json.Marshal(MessageBody)
-	fmt.Println(MessageByte)
 	client := &http.Client{}
 	req, err := http.NewRequest(SMSProviderAPIMethod, SMSAPI, bytes.NewBuffer(MessageByte))
-
 	if err != nil {
 		fmt.Println(err)
 		return
