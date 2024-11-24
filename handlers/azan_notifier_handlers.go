@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -24,7 +25,8 @@ func GetEnv(env string) string {
 }
 func GenDailyReport(data models.GetSunsetInfo) string {
 	DailyReportMessage := fmt.Sprintf(
-		"سلام عزیزم \n روز به خیر \n اطلاعات روز : \n تاریخ : %s \n اذان صبح : %s \n طلوع خورشید : %s \n اذان ظهر : %s \n غروب خورشید : %s \n اذان مغرب و عشا : %s \n نیمه شب شرعی : %s",
+		"سلام عزیزم \n روز به خیر \n اطلاعات روز شهر %s : \n تاریخ : %s \n اذان صبح : %s \n طلوع خورشید : %s \n اذان ظهر : %s \n غروب خورشید : %s \n اذان مغرب و عشا : %s \n نیمه شب شرعی : %s",
+		data.City,
 		data.Date,
 		data.Imsaak,
 		data.Sunrise,
@@ -40,12 +42,9 @@ func SendSMS(MessageBody models.SendSMS) {
 	APIKeyHeader := GetEnv("APIKeyHeader")
 	APIKey := GetEnv("APIKey")
 	SMSProviderAPIMethod := GetEnv("SMSProviderAPIMethod")
-	fmt.Println(MessageBody)
 	MessageByte, _ := json.Marshal(MessageBody)
-	fmt.Println(MessageByte)
 	client := &http.Client{}
 	req, err := http.NewRequest(SMSProviderAPIMethod, SMSAPI, bytes.NewBuffer(MessageByte))
-
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -65,4 +64,30 @@ func SendSMS(MessageBody models.SendSMS) {
 		return
 	}
 	fmt.Println(string(body))
+}
+func ParsTime(timeString string) int64 {
+	layout := "15:04:05"
+	parsedTime, err := time.Parse(layout, timeString)
+	fmt.Println("the time string: ", timeString)
+	fmt.Println("the parset time : ", parsedTime)
+	if err != nil {
+		return 0
+	}
+	location, err := time.LoadLocation("Asia/Tehran")
+	if err != nil {
+		return 0
+	}
+	timeInLocation := parsedTime.In(location)
+	return timeInLocation.Unix()
+}
+
+func GenEventsTimes(data models.GetSunsetInfo) models.EventUnixTime {
+	var ReligiousUnixTimes models.EventUnixTime
+	ReligiousUnixTimes.Imsaak = ParsTime(data.Imsaak)
+	ReligiousUnixTimes.Sunrise = ParsTime(data.Sunrise)
+	ReligiousUnixTimes.Noon = ParsTime(data.Noon)
+	ReligiousUnixTimes.Sunset = ParsTime(data.Sunset)
+	ReligiousUnixTimes.Maghreb = ParsTime(data.Maghreb)
+	ReligiousUnixTimes.Midnight = ParsTime(data.Midnight)
+	return ReligiousUnixTimes
 }

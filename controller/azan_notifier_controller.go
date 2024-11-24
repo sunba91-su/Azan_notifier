@@ -17,6 +17,8 @@ func StartProgram() {
 		fmt.Println("An error accoure", err)
 	}
 	DailyReportResponse := handlers.GenDailyReport(ReligiousTimes)
+	ReligiousUnixTimes := handlers.GenEventsTimes(ReligiousTimes)
+	fmt.Println("print  : ReligiousUnixTimes ", ReligiousUnixTimes)
 	DailyReport(DailyReportResponse)
 
 }
@@ -49,6 +51,10 @@ func DailyReport(Message string) {
 		Sender:   SenderNumber,
 		Recivers: Resiver,
 		Message:  Message,
+		SendTime: nil,
 	}
-	handlers.SendSMS(DailyReportBody)
+	//TODO Remove Debug Log
+	fmt.Println("****************", DailyReportBody, "**************************")
+	//TODO Re-enable Send SMS when done work
+	// handlers.SendSMS(DailyReportBody)
 }
