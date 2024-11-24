@@ -66,9 +66,12 @@ func SendSMS(MessageBody models.SendSMS) {
 	fmt.Println(string(body))
 }
 func ParsTime(timeString string) int64 {
-	layout := "15:04:05"
-	parsedTime, err := time.Parse(layout, timeString)
-	fmt.Println("the time string: ", timeString)
+	now := time.Now()
+	currentDate := now.Format("2006-01-02")
+	layout := "2006-01-02 15:04:05"
+	fullTimeString := currentDate + " " + timeString
+	parsedTime, err := time.Parse(layout, fullTimeString)
+	fmt.Println("the time string: ", fullTimeString)
 	fmt.Println("the parset time : ", parsedTime)
 	if err != nil {
 		return 0
@@ -77,7 +80,7 @@ func ParsTime(timeString string) int64 {
 	if err != nil {
 		return 0
 	}
-	timeInLocation := parsedTime.In(location)
+	timeInLocation, _ := time.ParseInLocation(layout, fullTimeString, location)
 	return timeInLocation.Unix()
 }
 
