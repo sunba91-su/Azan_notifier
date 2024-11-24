@@ -13,7 +13,7 @@ type GetSunsetInfo struct {
 }
 
 type SendSMS struct {
-	Sender   int      `json:"lineNumber"`
+	Sender   int64    `json:"lineNumber"`
 	Message  string   `json:"MessageText"`
 	Recivers []string `json:"Mobiles"`
 	SendTime *int64   `json:"SendDateTime,omitempty"`
@@ -25,10 +25,25 @@ type SMSResponse struct {
 }
 
 type EventUnixTime struct {
-	Imsaak   int64
-	Sunrise  int64
-	Noon     int64
-	Sunset   int64
-	Maghreb  int64
-	Midnight int64
+	Imsaak     int64
+	ImsaakEXP  int64
+	Sunrise    int64
+	Noon       int64
+	NoonEXP    int64
+	Sunset     int64
+	Maghreb    int64
+	MaghrebEXP int64
+	Midnight   int64
+}
+
+var EventMessages = map[string]string{
+	"Imsaak":     "اذان صبح به افق شهر %s",
+	"ImsaakEXP":  "یادآوری : \n \t پانزده دقیقه تا قضای نماز صبح به افق شهر %s",
+	"Sunrise":    "اعلام طلوع شرعی خورشید به افق شهر %s",
+	"Noon":       "اذان ظهر به افق شهر %s",
+	"NoonEXP":    "یادآوری : \n \t پانزده دقیقه تا قضای نماز ظهر به افق شهر %s",
+	"Sunset":     "اعلام غروب شرعی خورشید به افق شهر %s",
+	"Maghreb":    "اذان مغرب به افق شهر %s",
+	"MaghrebEXP": "یادآوری : \n \t پانزده دقیقه تا قضای نماز مغرب و عشا به افق شهر %s",
+	"Midnight":   "اعلام نیمه شب شرعی به افق شهر %s",
 }

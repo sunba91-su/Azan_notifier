@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
-	"strings"
+	"reflect"
+	"time"
 )
 
 func StartProgram() {
@@ -18,9 +18,8 @@ func StartProgram() {
 	}
 	DailyReportResponse := handlers.GenDailyReport(ReligiousTimes)
 	ReligiousUnixTimes := handlers.GenEventsTimes(ReligiousTimes)
-	fmt.Println("print  : ReligiousUnixTimes ", ReligiousUnixTimes)
+	ScheduleEventNotif(ReligiousUnixTimes, ReligiousTimes.City)
 	DailyReport(DailyReportResponse)
-
 }
 
 func GetReligiousTimes(CityCode string) (models.GetSunsetInfo, error) {
@@ -44,17 +43,28 @@ func GetReligiousTimes(CityCode string) (models.GetSunsetInfo, error) {
 }
 
 func DailyReport(Message string) {
-	SenderNumber, _ := strconv.Atoi(handlers.GetEnv("Sender"))
-	Resivers := handlers.GetEnv("Resivers")
-	Resiver := strings.Split(Resivers, ",")
-	DailyReportBody := models.SendSMS{
-		Sender:   SenderNumber,
-		Recivers: Resiver,
-		Message:  Message,
-		SendTime: nil,
-	}
+	DailyReportBody := handlers.ReqBodyGenerator(handlers.GetResivers(), Message, nil)
 	//TODO Remove Debug Log
 	fmt.Println("****************", DailyReportBody, "**************************")
-	//TODO Re-enable Send SMS when done work
 	// handlers.SendSMS(DailyReportBody)
+}
+func ScheduleEventNotif(ReligiousTime models.EventUnixTime, City string) {
+	EventList := reflect.ValueOf(ReligiousTime)
+	for Event := 0; Event < EventList.NumField(); Event++ {
+		field := EventList.Type().Field(Event)
+		EventTime := EventList.Field(Event).Int()
+		EventSMSBody := GenerateScheduleEventNotifBody(field.Name, EventTime, City)
+		if EventTime < time.Now().Unix() {
+			fmt.Println(EventSMSBody)
+			// handlers.SendSMS(EventSMSBody)
+		}
+	}
+}
+
+func GenerateScheduleEventNotifBody(Event string, EventUnixTime int64, City string) models.SendSMS {
+	var EventSMSModel models.SendSMS
+	EventMessage, _ := handlers.GetEventMessage(Event)
+	EventMessages := fmt.Sprintf(EventMessage, City)
+	EventSMSModel = handlers.ReqBodyGenerator(handlers.GetResivers(), EventMessages, &EventUnixTime)
+	return EventSMSModel
 }
