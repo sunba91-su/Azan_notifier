@@ -44,9 +44,7 @@ func GetReligiousTimes(CityCode string) (models.GetSunsetInfo, error) {
 
 func DailyReport(Message string) {
 	DailyReportBody := handlers.ReqBodyGenerator(handlers.GetResivers(), Message, nil)
-	//TODO Remove Debug Log
-	fmt.Println("****************", DailyReportBody, "**************************")
-	// handlers.SendSMS(DailyReportBody)
+	handlers.SendSMS(DailyReportBody)
 }
 func ScheduleEventNotif(ReligiousTime models.EventUnixTime, City string) {
 	EventList := reflect.ValueOf(ReligiousTime)
@@ -54,9 +52,8 @@ func ScheduleEventNotif(ReligiousTime models.EventUnixTime, City string) {
 		field := EventList.Type().Field(Event)
 		EventTime := EventList.Field(Event).Int()
 		EventSMSBody := GenerateScheduleEventNotifBody(field.Name, EventTime, City)
-		if EventTime < time.Now().Unix() {
-			fmt.Println(EventSMSBody)
-			// handlers.SendSMS(EventSMSBody)
+		if EventTime > time.Now().Unix() {
+			handlers.SendSMS(EventSMSBody)
 		}
 	}
 }

@@ -8,5 +8,4 @@ import (
 func main() {
 	handlers.LoadEnvs()
 	controller.StartProgram()
-	select {}
 }

@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -27,7 +28,6 @@ func GetEnv(env string) string {
 }
 func GetIntEnv(env string) int64 {
 	myIntegerStr := GetEnv(env)
-	fmt.Printf("Env : %s | String : %s \n", env, myIntegerStr)
 	myInteger, err := strconv.ParseInt(myIntegerStr, 10, 64)
 	if err != nil {
 		log.Fatalf("Error converting MY_INTEGER to int: %v", err)
@@ -104,17 +104,29 @@ func GetResivers() []string {
 	return Resiver
 }
 func GenEventsTimes(data models.GetSunsetInfo) models.EventUnixTime {
+	offset := GetIntEnv("EXPTimeOffset")
 	var ReligiousUnixTimes models.EventUnixTime
 	ReligiousUnixTimes.Imsaak = ParsTime(data.Imsaak)
-	ReligiousUnixTimes.ImsaakEXP = ReligiousUnixTimes.Sunrise - GetIntEnv("EXPTimeOffset")
 	ReligiousUnixTimes.Sunrise = ParsTime(data.Sunrise)
+	ReligiousUnixTimes.ImsaakEXP = ReligiousUnixTimes.Sunrise - offset
 	ReligiousUnixTimes.Noon = ParsTime(data.Noon)
-	ReligiousUnixTimes.NoonEXP = ReligiousUnixTimes.Sunset - GetIntEnv("EXPTimeOffset")
 	ReligiousUnixTimes.Sunset = ParsTime(data.Sunset)
+	ReligiousUnixTimes.NoonEXP = ReligiousUnixTimes.Sunset - offset
 	ReligiousUnixTimes.Maghreb = ParsTime(data.Maghreb)
-	ReligiousUnixTimes.MaghrebEXP = ReligiousUnixTimes.Midnight - GetIntEnv("EXPTimeOffset")
 	ReligiousUnixTimes.Midnight = ParsTime(data.Midnight)
+	ReligiousUnixTimes.MaghrebEXP = ReligiousUnixTimes.Midnight - offset
 	return ReligiousUnixTimes
+}
+func DebugSMSBudy(SMSBody models.SendSMS) {
+	val := reflect.ValueOf(SMSBody)
+	typ := reflect.TypeOf(SMSBody)
+
+	for i := 0; i < val.NumField(); i++ {
+		field := typ.Field(i)
+		value := val.Field(i)
+
+		fmt.Printf("************* Debug SMS Body ***************** %s: %v\n", field.Name, value.Interface())
+	}
 }
 func GetEventMessage(Event string) (string, bool) {
 	message, exists := models.EventMessages[Event]
