@@ -18,8 +18,8 @@ func StartProgram() {
 	}
 	DailyReportResponse := handlers.GenDailyReport(ReligiousTimes)
 	ReligiousUnixTimes := handlers.GenEventsTimes(ReligiousTimes)
-	ScheduleEventNotif(ReligiousUnixTimes, ReligiousTimes.City)
 	DailyReport(DailyReportResponse)
+	ScheduleEventNotif(ReligiousUnixTimes, ReligiousTimes.City)
 }
 
 func GetReligiousTimes(CityCode string) (models.GetSunsetInfo, error) {
@@ -53,6 +53,7 @@ func ScheduleEventNotif(ReligiousTime models.EventUnixTime, City string) {
 		EventTime := EventList.Field(Event).Int()
 		EventSMSBody := GenerateScheduleEventNotifBody(field.Name, EventTime, City)
 		if EventTime > time.Now().Unix() {
+			time.Sleep(1 * time.Minute)
 			handlers.SendSMS(EventSMSBody)
 		}
 	}
