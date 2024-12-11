@@ -53,7 +53,7 @@ func ScheduleEventNotif(ReligiousTime models.EventUnixTime, City string) {
 		EventTime := EventList.Field(Event).Int()
 		EventSMSBody := GenerateScheduleEventNotifBody(field.Name, EventTime, City)
 		if EventTime > time.Now().Unix() {
-			time.Sleep(1 * time.Minute)
+			time.Sleep(5 * time.Minute)
 			handlers.SendSMS(EventSMSBody)
 		}
 	}
